@@ -58,10 +58,7 @@ import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
-import java.nio.file.attribute.BasicFileAttributeView;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.nio.file.attribute.FileAttribute;
-import java.nio.file.attribute.FileAttributeView;
+import java.nio.file.attribute.*;
 import java.nio.file.spi.FileSystemProvider;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -786,11 +783,16 @@ public final class CloudStorageFileSystemProvider extends FileSystemProvider {
   }
 
   @Override
-  public Map<String, Object> readAttributes(Path path, String attributes, LinkOption... options) {
+  public Map<String, Object> readAttributes(Path path, String attributes, LinkOption... options) throws IOException {
+    // ADDED readAttributes mentioned here:
+    // Link: https://github.com/rossdrew/Spokesman-SFTP/blob/a92f9cceef2ab289e2ecc07394d2237dd86240fb/src/main/java/com/himex/s3/S3FileSystemProviderPlus.java#L50
     // TODO(#811): Java 7 NIO defines at least eleven string attributes we'd want to support
     //             (eg. BasicFileAttributeView and PosixFileAttributeView), so rather than a partial
     //             implementation we rely on the other overload for now.
-    throw new UnsupportedOperationException();
+    //throw new UnsupportedOperationException();
+    HashMap < String, Object > attributeMap = new HashMap<>();
+    attributeMap.put("permissions", PosixFilePermissions.fromString("rwxrwx---"));
+    return attributeMap;
   }
 
   @Override
